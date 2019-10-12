@@ -1,0 +1,27 @@
+1. 
+
+SELECT Orders.ID, Orders.Customer_id, Orders.Currency, Orders.Amount, Orders.Status 
+FROM Orders LEFT JOIN Transactions ON Orders.id = Transactions.Order_id
+WHERE Orders.Status='success' and NOT Transactions.Is_successful;
+
+2.  
+
+SELECT Orders.ID, sum(CASE WHEN Transactions.Is_successful=1 THEN 1 ELSE 0 END) AS countSucces, sum(CASE WHEN Transaction.Is_successful=0 THEN 1 ELSE 0 END) AS countFails
+FROM Transactions RIGHT JOIN Orders ON Transactions.Order_id = Orders.ID
+WHERE Orders.Status="Fail"
+Group by Orders.ID;
+
+
+3. 
+SELECT Orders.ID as OrderID, MAX(Transactions.id) as Transaction
+FROM Orders
+JOIN Transactions ON Transactions.OrderID = Orders.ID
+WHERE Orders.Status = "success" AND Transactions.is_successful = 1
+GROUP BY Orders.ID
+
+UNION ALL
+
+SELECT Orders.ID as OrderID, Transactions.id as Transaction
+FROM Orders
+JOIN Transactions ON Transactions.OrderID = Orders.ID
+WHERE Orders.Status = "fail" AND Transactions.is_successful = 0;
